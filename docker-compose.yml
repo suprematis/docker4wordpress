@@ -28,6 +28,8 @@ services:
 # Options for macOS users (http://docs.docker4wordpress.org/en/latest/macos)
 #      - codebase:/var/www/html:cached # User-guided caching
 #      - docker-sync:/var/www/html # Docker-sync
+#    ports:
+#      - '80:80'
 
   nginx:
     image: wodby/wordpress-nginx:4-1.13-2.2.0
@@ -47,7 +49,11 @@ services:
     labels:
       - 'traefik.backend=nginx'
       - 'traefik.port=80'
-      - 'traefik.frontend.rule=Host:wp.docker.localhost'
+#      - 'traefik.frontend.rule=Host:wp.docker.dev'
+      - 'traefik.frontend.rule=Host:voltadev.suprematis.com'
+
+#    ports:
+#      - '8181:8181'
 
 #  apache:
 #    image: wodby/wordpress-apache:2.4-1.0.0
@@ -83,18 +89,18 @@ services:
 #  redis:
 #    image: wodby/redis:3.2-2.1.1
 
-#  pma:
-#    image: phpmyadmin/phpmyadmin
-#    environment:
-#      PMA_HOST: mariadb
-#      PMA_USER: wordpress
-#      PMA_PASSWORD: wordpress
-#      PHP_UPLOAD_MAX_FILESIZE: 1G
-#      PHP_MAX_INPUT_VARS: 1G
-#    labels:
-#      - 'traefik.backend=pma'
-#      - 'traefik.port=80'
-#      - 'traefik.frontend.rule=Host:pma.wp.docker.localhost'
+  pma:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: mariadb
+      PMA_USER: wordpress
+      PMA_PASSWORD: wordpress
+      PHP_UPLOAD_MAX_FILESIZE: 1G
+      PHP_MAX_INPUT_VARS: 1G
+    labels:
+      - 'traefik.backend=pma'
+      - 'traefik.port=80'
+      - 'traefik.frontend.rule=Host:pma.wp.docker.localhost'
 
 #  athenapdf:
 #    image: arachnysdocker/athenapdf-service
@@ -122,13 +128,15 @@ services:
       - 'traefik.backend=portainer'
       - 'traefik.port=9000'
       - 'traefik.frontend.rule=Host:portainer.wp.docker.localhost'
+    ports:
+      - '9000:9000'
 
   traefik:
     image: traefik
     command: -c /dev/null --web --docker --logLevel=INFO
     ports:
       - '8000:80'
-#      - '8080:8080' # Dashboard
+      - '8080:8080' # Dashboard
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
